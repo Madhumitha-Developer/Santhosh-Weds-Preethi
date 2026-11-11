@@ -83,14 +83,9 @@ export default function BeachIntro({ onOpen }) {
             </div>
           </div>
 
-          <div className="space-y-0.5">
-            <span className="block font-cinzel text-xs tracking-[0.2em] uppercase font-bold text-navy-900 group-hover:text-sunset-700 transition-colors">
-              Tap To Open
-            </span>
-            <span className="block text-[11px] text-slate-500 font-sans tracking-wide">
-              🎵 Music starts automatically
-            </span>
-          </div>
+          <span className="block font-cinzel text-xs tracking-[0.2em] uppercase font-bold text-navy-900 group-hover:text-sunset-700 transition-colors">
+            Tap To Open
+          </span>
         </button>
       </div>
     </div>
