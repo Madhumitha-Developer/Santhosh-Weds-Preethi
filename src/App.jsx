@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import BeachIntro from './components/BeachIntro'
 import PetalCanvas from './components/PetalCanvas'
 import MusicButton from './components/MusicButton'
 import Toast from './components/Toast'
@@ -13,6 +14,7 @@ import Footer from './components/Footer'
 export default function App() {
   const [toast, setToast] = useState('')
   const timer = useRef(null)
+  const musicRef = useRef(null)
 
   const showToast = useCallback((msg) => {
     setToast(msg)
@@ -22,10 +24,18 @@ export default function App() {
 
   useEffect(() => () => clearTimeout(timer.current), [])
 
+  const handleOpenInvitation = () => {
+    musicRef.current?.play()
+    showToast('Welcome to our wedding celebration! 🎵')
+  }
+
   return (
     <div className="min-h-screen bg-sunset-50 relative">
+      {/* Beach-themed Tap to Open Cover */}
+      <BeachIntro onOpen={handleOpenInvitation} />
+
       <PetalCanvas />
-      <MusicButton onToast={showToast} />
+      <MusicButton ref={musicRef} onToast={showToast} />
       <Toast message={toast} />
 
       <Hero />

@@ -1,59 +1,65 @@
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { FaMusic, FaVolumeHigh, FaVolumeLow, FaVolumeXmark, FaPlus, FaMinus } from 'react-icons/fa6'
 
 const INITIAL_VOLUME = 20 // 20%
 const STEP = 10 // ±10%
 
-export default function MusicButton({ onToast }) {
+const MusicButton = forwardRef(function MusicButton({ onToast }, ref) {
   const [playing, setPlaying] = useState(false)
   const [volume, setVolume] = useState(INITIAL_VOLUME)
   const audioRef = useRef(null)
 
+  const playAudio = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.volume = volume / 100
+    return audio
+      .play()
+      .then(() => {
+        setPlaying(true)
+      })
+      .catch((e) => {
+        console.log('Play request was prevented:', e)
+      })
+  }
+
+  useImperativeHandle(ref, () => ({
+    play: playAudio,
+    pause: () => {
+      audioRef.current?.pause()
+      setPlaying(false)
+    },
+  }))
+
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
-
     audio.volume = INITIAL_VOLUME / 100
 
+    // Capture first touch or interaction anywhere across document as fallback
     let started = false
-
-    const removeListeners = () => {
-      const events = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']
-      events.forEach((ev) => {
-        window.removeEventListener(ev, tryPlay, { capture: true })
-        document.removeEventListener(ev, tryPlay, { capture: true })
+    const tryFirstGesture = () => {
+      if (started) return
+      playAudio()?.then(() => {
+        started = true
+        cleanup()
       })
     }
 
-    const tryPlay = () => {
-      if (started) return
-      if (!audio) return
-
-      audio.volume = volume / 100
-      const p = audio.play()
-      if (p !== undefined) {
-        p.then(() => {
-          started = true
-          setPlaying(true)
-          removeListeners()
-        }).catch(() => {
-          // Autoplay blocked by browser policy; keep listeners active for first user tap/click
-        })
-      }
+    const events = ['pointerdown', 'touchstart', 'click', 'keydown']
+    const cleanup = () => {
+      events.forEach((ev) => {
+        window.removeEventListener(ev, tryFirstGesture, { capture: true })
+        document.removeEventListener(ev, tryFirstGesture, { capture: true })
+      })
     }
 
-    const events = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']
     events.forEach((ev) => {
-      window.addEventListener(ev, tryPlay, { capture: true, passive: true })
-      document.addEventListener(ev, tryPlay, { capture: true, passive: true })
+      window.addEventListener(ev, tryFirstGesture, { capture: true, passive: true })
+      document.addEventListener(ev, tryFirstGesture, { capture: true, passive: true })
     })
 
-    // Attempt autoplay immediately on mount
-    tryPlay()
-
-    return () => {
-      removeListeners()
-    }
+    return cleanup
   }, [volume])
 
   const toggle = () => {
@@ -66,15 +72,9 @@ export default function MusicButton({ onToast }) {
       onToast('Music paused')
     } else {
       audio.volume = volume / 100
-      audio
-        .play()
-        .then(() => {
-          setPlaying(true)
-          onToast('Playing our song 🎵')
-        })
-        .catch(() => {
-          onToast('Could not play music')
-        })
+      playAudio()?.then(() => {
+        onToast('Playing our song 🎵')
+      })
     }
   }
 
@@ -95,7 +95,6 @@ export default function MusicButton({ onToast }) {
       <audio
         ref={audioRef}
         src="/wedding-song.mp3"
-        autoPlay
         playsInline
         loop
         preload="auto"
@@ -125,7 +124,7 @@ export default function MusicButton({ onToast }) {
           {playing ? (
             <VolumeIcon className="text-lg animate-pulse text-sunset-600" />
           ) : (
-            <FaMusic className="text-lg animate-bounce text-sunset-700" />
+            <FaMusic className="text-lg text-sunset-700" />
           )}
         </button>
 
@@ -141,4 +140,6 @@ export default function MusicButton({ onToast }) {
       </div>
     </>
   )
-}
+})
+
+export default MusicButton
