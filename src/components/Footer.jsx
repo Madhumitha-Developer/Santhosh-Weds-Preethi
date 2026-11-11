@@ -2,7 +2,7 @@ import { FaHeart, FaWhatsapp, FaRegCopy } from 'react-icons/fa6'
 
 export default function Footer({ onToast }) {
   const shareWhatsApp = () => {
-    const url = window.location.href
+    const url = 'https://santhosh-weds-preethi.vercel.app/'
     const text = encodeURIComponent(
 `With the blessings of our families,
 we invite you to celebrate our special day. ❤️
