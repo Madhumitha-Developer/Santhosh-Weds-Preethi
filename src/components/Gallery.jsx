@@ -16,13 +16,13 @@ export default function Gallery() {
     <section className="py-12 space-y-6">
       <SectionHeading eyebrow="Moments of Love" title="Photo Gallery" />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
         {GALLERY.map((p) => (
           <button
             key={p.id}
             type="button"
             onClick={() => setOpen(p)}
-            className="relative rounded-xl overflow-hidden aspect-square border border-gold/30 shadow-md group"
+            className="relative rounded-xl overflow-hidden aspect-[4/5] border border-gold/30 shadow-md group w-full"
             aria-label={`Open ${p.alt}`}
           >
             <img

@@ -32,6 +32,31 @@ export default function MusicButton({ onToast }) {
   const playerRef = useRef(null)
   const wantPlay = useRef(false)
 
+  // Auto-play on first user interaction (browsers block silent autoplay)
+  useEffect(() => {
+    let started = false
+    const tryAutoPlay = async () => {
+      if (started) return
+      started = true
+      ;['click', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+        window.removeEventListener(ev, tryAutoPlay)
+      )
+      try {
+        const player = await ensurePlayer()
+        player.setVolume(INITIAL_VOLUME)
+        player.playVideo()
+      } catch { /* silently ignore */ }
+    }
+    ;['click', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+      window.addEventListener(ev, tryAutoPlay, { once: true, passive: true })
+    )
+    return () => {
+      ;['click', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+        window.removeEventListener(ev, tryAutoPlay)
+      )
+    }
+  }, [])
+
   useEffect(() => () => playerRef.current?.destroy?.(), [])
 
   const ensurePlayer = async () => {
