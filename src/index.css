@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-[#faf6f0] text-slate-800 font-sans antialiased overflow-x-hidden;
+}
+
+::selection {
+  @apply bg-sunset-200 text-sunset-900;
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    box-shadow: 0 15px 35px -5px rgba(183, 79, 23, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  }
+
+  .hero-bg {
+    background:
+      linear-gradient(180deg, rgba(20, 15, 30, 0.4) 0%, rgba(235, 134, 52, 0.2) 40%, rgba(254, 243, 226, 1) 95%),
+      url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  }
+
+  .section-eyebrow {
+    @apply text-xs uppercase font-cinzel tracking-widest text-sunset-700 font-semibold;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl font-bold text-navy-900;
+  }
+
+  .field-label {
+    @apply block text-[11px] font-cinzel uppercase font-semibold text-slate-700 mb-1;
+  }
+
+  .field-input {
+    @apply w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none text-sm bg-white/90
+      focus:border-gold focus:ring-1 focus:ring-gold;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-bounce,
+  .animate-pulse,
+  .animate-fade-in {
+    animation: none !important;
+  }
+}
